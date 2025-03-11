@@ -1,0 +1,61 @@
+<div class="row">
+  <div class="col-lg-8 mx-auto">
+    <div class="card shadow">
+      <div class="card-header bg-white">
+        <h2 class="mb-0">Create Short URL</h2>
+      </div>
+      <div class="card-body">
+        <form method="POST" action="/urls/create">
+          <div class="mb-3">
+            <label for="longUrl" class="form-label fw-bold">Long URL *</label>
+            <input type="url" class="form-control" id="longUrl" name="longUrl" placeholder="https://example.com/very/long/url" required>
+            <div class="form-text">Enter the URL you want to shorten</div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="title" class="form-label fw-bold">Title</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="My awesome link">
+            <div class="form-text">A name to help you remember what this link is for</div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="customCode" class="form-label fw-bold">Custom URL Code</label>
+            <div class="input-group">
+              <span class="input-group-text"><%= baseUrl %>/</span>
+              <input type="text" class="form-control" id="customCode" name="customCode" placeholder="custom-code" pattern="[a-zA-Z0-9-_]+">
+            </div>
+            <div class="form-text">Leave blank to generate a random code. Only letters, numbers, hyphens and underscores.</div>
+          </div>
+          
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="expiresAt" class="form-label fw-bold">Expiration Date</label>
+              <input type="datetime-local" class="form-control" id="expiresAt" name="expiresAt">
+              <div class="form-text">When should this URL expire? Leave blank for no expiration.</div>
+            </div>
+            <div class="col-md-6">
+              <label for="password" class="form-label fw-bold">Password Protection</label>
+              <input type="password" class="form-control" id="password" name="password" placeholder="Optional password">
+              <div class="form-text">Require a password to access this URL</div>
+            </div>
+          </div>
+          
+          <div class="mb-4">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="on" id="isPublic" name="isPublic">
+              <label class="form-check-label" for="isPublic">
+                Make this URL public
+              </label>
+              <div class="form-text">Public URLs will be visible in the public directory</div>
+            </div>
+          </div>
+          
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary btn-lg">Create Short URL</button>
+            <a href="/dashboard" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
