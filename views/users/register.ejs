@@ -1,0 +1,45 @@
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow">
+      <div class="card-body p-5">
+        <div class="text-center mb-4">
+          <h2>Create an Account</h2>
+          <p class="text-muted">Fill out the form below to create your account</p>
+        </div>
+        
+        <form action="/users/register" method="POST">
+          <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" id="name" name="name" class="form-control" placeholder="Enter your name" value="<%= typeof name != 'undefined' ? name : '' %>" required>
+          </div>
+          
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" value="<%= typeof email != 'undefined' ? email : '' %>" required>
+          </div>
+          
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Create a password" required>
+            <div class="form-text">Password must be at least 6 characters long</div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="password2" class="form-label">Confirm Password</label>
+            <input type="password" id="password2" name="password2" class="form-control" placeholder="Confirm your password" required>
+          </div>
+          
+          <div class="d-grid gap-2 mt-4">
+            <button type="submit" class="btn btn-primary btn-lg">Register</button>
+          </div>
+        </form>
+        
+        <hr class="my-4">
+        
+        <div class="text-center">
+          <p>Already have an account? <a href="/users/login">Login</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
