@@ -1,0 +1,95 @@
+<div class="row gx-5 align-items-center">
+  <div class="col-lg-6">
+    <div class="mb-5">
+      <h1 class="display-5 fw-bold mb-3">URL Shortener</h1>
+      <p class="lead fs-4 text-muted">Create short, memorable links that redirect to your long URLs. Track clicks and analyze your traffic with detailed analytics.</p>
+      <div class="d-grid gap-2 d-sm-flex mt-4">
+        <% if (user) { %>
+          <a href="/urls/create" class="btn btn-primary btn-lg px-4 gap-3">Create Short URL</a>
+          <a href="/dashboard" class="btn btn-outline-primary btn-lg px-4">Dashboard</a>
+        <% } else { %>
+          <a href="/users/register" class="btn btn-primary btn-lg px-4 gap-3">Get Started</a>
+          <a href="/users/login" class="btn btn-outline-primary btn-lg px-4">Login</a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card shadow-lg">
+      <div class="card-body p-4">
+        <h3 class="mb-3">Shorten a URL</h3>
+        <form action="/urls/create" method="POST">
+          <div class="mb-3">
+            <label for="longUrl" class="form-label">Enter a long URL</label>
+            <input type="url" class="form-control form-control-lg" id="longUrl" name="longUrl" placeholder="https://example.com/very/long/url/that/needs/shortening" required>
+          </div>
+          <div class="d-grid">
+            <% if (user) { %>
+              <button type="submit" class="btn btn-primary btn-lg">Shorten</button>
+            <% } else { %>
+              <a href="/users/login" class="btn btn-primary btn-lg">Login to Shorten</a>
+            <% } %>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row my-5 py-5">
+  <div class="col-12 text-center mb-4">
+    <h2 class="display-6 fw-bold mb-3">Features</h2>
+    <p class="lead text-muted">Everything you need to manage and track your short links</p>
+  </div>
+  
+  <div class="col-md-4 mb-4">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body p-4 text-center">
+        <div class="feature-icon bg-primary bg-gradient text-white mb-3">
+          <i class="fas fa-link fa-2x"></i>
+        </div>
+        <h3 class="card-title h5">Custom Short URLs</h3>
+        <p class="card-text">Create branded, easy-to-remember URLs with custom aliases instead of random characters.</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-4 mb-4">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body p-4 text-center">
+        <div class="feature-icon bg-primary bg-gradient text-white mb-3">
+          <i class="fas fa-chart-line fa-2x"></i>
+        </div>
+        <h3 class="card-title h5">Analytics Dashboard</h3>
+        <p class="card-text">Track clicks, referrers, geographic locations, devices, and browsers in real-time.</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-4 mb-4">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body p-4 text-center">
+        <div class="feature-icon bg-primary bg-gradient text-white mb-3">
+          <i class="fas fa-code fa-2x"></i>
+        </div>
+        <h3 class="card-title h5">API Access</h3>
+        <p class="card-text">Integrate URL shortening into your applications with our easy-to-use REST API.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row my-5 p-5 bg-light rounded-3">
+  <div class="col-lg-8 mx-auto text-center">
+    <h2 class="display-6 fw-bold mb-3">Ready to get started?</h2>
+    <p class="lead">Join thousands of users who trust our URL shortener for their link management needs.</p>
+    <div class="d-grid gap-2 d-sm-flex justify-content-center mt-4">
+      <% if (user) { %>
+        <a href="/urls/create" class="btn btn-primary btn-lg px-4 gap-3">Create Short URL</a>
+      <% } else { %>
+        <a href="/users/register" class="btn btn-primary btn-lg px-4 gap-3">Sign Up Now</a>
+        <a href="/users/login" class="btn btn-outline-primary btn-lg px-4">Login</a>
+      <% } %>
+    </div>
+  </div>
+</div>
