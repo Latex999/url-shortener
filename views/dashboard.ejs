@@ -1,0 +1,222 @@
+<div class="row mb-4">
+  <div class="col-md-12">
+    <div class="d-flex justify-content-between align-items-center">
+      <h1>Dashboard</h1>
+      <a href="/urls/create" class="btn btn-primary">
+        <i class="fas fa-plus me-1"></i> Create URL
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-4">
+  <div class="col-md-4 mb-3">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="card-title">Total URLs</h5>
+        <p class="display-4 fw-bold text-primary"><%= totalUrls %></p>
+        <p class="text-muted">Total number of short URLs you've created</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-3">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="card-title">Total Clicks</h5>
+        <p class="display-4 fw-bold text-primary"><%= totalClicks %></p>
+        <p class="text-muted">Total clicks across all your URLs</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-3">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="card-title">Average CTR</h5>
+        <p class="display-4 fw-bold text-primary">
+          <%= totalUrls > 0 ? Math.round(totalClicks / totalUrls) : 0 %>
+        </p>
+        <p class="text-muted">Average clicks per URL</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% if (topUrls && topUrls.length > 0) { %>
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">Top Performing URLs</h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Short URL</th>
+                  <th>Destination</th>
+                  <th class="text-center">Clicks</th>
+                  <th class="text-center">Created</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% topUrls.forEach(url => { %>
+                  <tr>
+                    <td>
+                      <a href="<%= url.shortUrl %>" target="_blank" class="text-decoration-none">
+                        <%= url.shortUrl.split('/').pop() %>
+                      </a>
+                    </td>
+                    <td>
+                      <% if (url.longUrl.length > 40) { %>
+                        <%= url.longUrl.substring(0, 40) %>...
+                      <% } else { %>
+                        <%= url.longUrl %>
+                      <% } %>
+                    </td>
+                    <td class="text-center"><%= url.clicks %></td>
+                    <td class="text-center"><%= new Date(url.createdAt).toLocaleDateString() %></td>
+                    <td class="text-end">
+                      <a href="/urls/view/<%= url._id %>" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-chart-line"></i>
+                      </a>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% } %>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card shadow-sm">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Your URLs</h5>
+        <div class="input-group" style="max-width: 300px;">
+          <input type="text" id="urlSearch" class="form-control" placeholder="Search URLs...">
+          <span class="input-group-text">
+            <i class="fas fa-search"></i>
+          </span>
+        </div>
+      </div>
+      <div class="card-body">
+        <% if (urls && urls.length > 0) { %>
+          <div class="table-responsive">
+            <table class="table table-hover" id="urlTable">
+              <thead>
+                <tr>
+                  <th>Short URL</th>
+                  <th>Destination</th>
+                  <th class="text-center">Clicks</th>
+                  <th class="text-center">Created</th>
+                  <th class="text-center">Status</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% urls.forEach(url => { %>
+                  <tr>
+                    <td>
+                      <a href="<%= url.shortUrl %>" target="_blank" class="text-decoration-none">
+                        <%= url.shortUrl.split('/').pop() %>
+                        <% if (url.title) { %>
+                          <small class="d-block text-muted"><%= url.title %></small>
+                        <% } %>
+                      </a>
+                    </td>
+                    <td>
+                      <% if (url.longUrl.length > 40) { %>
+                        <%= url.longUrl.substring(0, 40) %>...
+                      <% } else { %>
+                        <%= url.longUrl %>
+                      <% } %>
+                    </td>
+                    <td class="text-center"><%= url.clicks %></td>
+                    <td class="text-center"><%= new Date(url.createdAt).toLocaleDateString() %></td>
+                    <td class="text-center">
+                      <% if (url.isActive && !url.isExpired()) { %>
+                        <span class="badge bg-success">Active</span>
+                      <% } else if (!url.isActive) { %>
+                        <span class="badge bg-secondary">Inactive</span>
+                      <% } else { %>
+                        <span class="badge bg-danger">Expired</span>
+                      <% } %>
+                    </td>
+                    <td class="text-end">
+                      <div class="btn-group" role="group">
+                        <a href="/urls/view/<%= url._id %>" class="btn btn-sm btn-outline-primary" title="Analytics">
+                          <i class="fas fa-chart-line"></i>
+                        </a>
+                        <a href="/urls/edit/<%= url._id %>" class="btn btn-sm btn-outline-secondary" title="Edit">
+                          <i class="fas fa-edit"></i>
+                        </a>
+                        <button type="button" class="btn btn-sm btn-outline-danger" title="Delete" 
+                                data-bs-toggle="modal" data-bs-target="#deleteModal<%= url._id %>">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                      
+                      <!-- Delete Modal -->
+                      <div class="modal fade" id="deleteModal<%= url._id %>" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title">Confirm Delete</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              <p>Are you sure you want to delete this URL? This action cannot be undone.</p>
+                              <p><strong>Short URL:</strong> <%= url.shortUrl %></p>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                              <form action="/urls/delete/<%= url._id %>" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } else { %>
+          <div class="text-center py-5">
+            <i class="fas fa-link fa-3x text-muted mb-3"></i>
+            <h4>No URLs yet</h4>
+            <p class="text-muted">You haven't created any short URLs yet.</p>
+            <a href="/urls/create" class="btn btn-primary mt-2">Create Your First URL</a>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Custom JS for page functionality -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // URL search functionality
+    const urlSearch = document.getElementById('urlSearch');
+    if (urlSearch) {
+      urlSearch.addEventListener('keyup', function() {
+        const searchValue = this.value.toLowerCase();
+        const tableRows = document.querySelectorAll('#urlTable tbody tr');
+        
+        tableRows.forEach(row => {
+          const text = row.textContent.toLowerCase();
+          row.style.display = text.includes(searchValue) ? '' : 'none';
+        });
+      });
+    }
+  });
+</script>
