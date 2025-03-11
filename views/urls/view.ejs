@@ -1,0 +1,278 @@
+<div class="row mb-4">
+  <div class="col-md-12">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active" aria-current="page">URL Analytics</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<div class="row mb-4">
+  <div class="col-md-12">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h3 class="card-title mb-0"><%= url.title || 'URL Details' %></h3>
+          <div>
+            <a href="/urls/edit/<%= url._id %>" class="btn btn-sm btn-outline-primary">
+              <i class="fas fa-edit me-1"></i> Edit
+            </a>
+            <button class="btn btn-sm btn-outline-secondary ms-2" id="copyUrlBtn" data-url="<%= url.shortUrl %>">
+              <i class="fas fa-copy me-1"></i> Copy URL
+            </button>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-6">
+            <p class="mb-2"><strong>Short URL:</strong> <a href="<%= url.shortUrl %>" target="_blank"><%= url.shortUrl %></a></p>
+            <p class="mb-2"><strong>Destination:</strong> <a href="<%= url.longUrl %>" target="_blank"><%= url.longUrl %></a></p>
+            <p class="mb-2"><strong>Created:</strong> <%= new Date(url.createdAt).toLocaleString() %></p>
+          </div>
+          <div class="col-md-6">
+            <p class="mb-2"><strong>Status:</strong> 
+              <% if (url.isActive && !url.isExpired()) { %>
+                <span class="badge bg-success">Active</span>
+              <% } else if (!url.isActive) { %>
+                <span class="badge bg-secondary">Inactive</span>
+              <% } else { %>
+                <span class="badge bg-danger">Expired</span>
+              <% } %>
+            </p>
+            <p class="mb-2"><strong>Expires:</strong> <%= url.expiresAt ? new Date(url.expiresAt).toLocaleString() : 'Never' %></p>
+            <p class="mb-2"><strong>Password Protected:</strong> <%= url.password ? 'Yes' : 'No' %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-4">
+  <div class="col-md-4 mb-3">
+    <div class="card shadow-sm h-100">
+      <div class="card-body text-center">
+        <h5 class="card-title">Total Clicks</h5>
+        <p class="display-4 fw-bold text-primary"><%= url.clicks %></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-8 mb-3">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="card-title">Clicks Over Time</h5>
+        <div class="time-stats">
+          <div class="d-flex justify-content-around text-center">
+            <div>
+              <h5 class="mb-0 fs-2 fw-bold text-primary"><%= stats.timeDistribution.last24Hours %></h5>
+              <p class="text-muted small">Last 24 Hours</p>
+            </div>
+            <div>
+              <h5 class="mb-0 fs-2 fw-bold text-primary"><%= stats.timeDistribution.last7Days %></h5>
+              <p class="text-muted small">Last 7 Days</p>
+            </div>
+            <div>
+              <h5 class="mb-0 fs-2 fw-bold text-primary"><%= stats.timeDistribution.last30Days %></h5>
+              <p class="text-muted small">Last 30 Days</p>
+            </div>
+            <div>
+              <h5 class="mb-0 fs-2 fw-bold text-primary"><%= stats.timeDistribution.total %></h5>
+              <p class="text-muted small">All Time</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-4">
+  <% if (Object.keys(stats.browsers).length > 0) { %>
+    <div class="col-md-6 mb-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">Browser Distribution</h5>
+          <canvas id="browserChart" width="400" height="300"></canvas>
+        </div>
+      </div>
+    </div>
+  <% } %>
+  
+  <% if (Object.keys(stats.os).length > 0) { %>
+    <div class="col-md-6 mb-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">Operating System Distribution</h5>
+          <canvas id="osChart" width="400" height="300"></canvas>
+        </div>
+      </div>
+    </div>
+  <% } %>
+</div>
+
+<div class="row mb-4">
+  <% if (Object.keys(stats.devices).length > 0) { %>
+    <div class="col-md-6 mb-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">Device Distribution</h5>
+          <canvas id="deviceChart" width="400" height="300"></canvas>
+        </div>
+      </div>
+    </div>
+  <% } %>
+  
+  <% if (Object.keys(stats.referrers).length > 0) { %>
+    <div class="col-md-6 mb-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">Top Referrers</h5>
+          <div class="table-responsive">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th>Referrer</th>
+                  <th class="text-end">Clicks</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% Object.entries(stats.referrers).sort((a, b) => b[1] - a[1]).slice(0, 10).forEach(([referrer, count]) => { %>
+                  <tr>
+                    <td><%= referrer || 'Direct / Unknown' %></td>
+                    <td class="text-end"><%= count %></td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% } %>
+</div>
+
+<% if (url.clickDetails && url.clickDetails.length > 0) { %>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Recent Clicks</h5>
+          <div class="input-group" style="max-width: 300px;">
+            <input type="text" id="clickSearch" class="form-control" placeholder="Search clicks...">
+            <span class="input-group-text">
+              <i class="fas fa-search"></i>
+            </span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-sm table-hover" id="clickTable">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Browser</th>
+                  <th>OS</th>
+                  <th>Device</th>
+                  <th>Referrer</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% url.clickDetails.slice().reverse().forEach(click => { %>
+                  <tr>
+                    <td><%= new Date(click.timestamp).toLocaleString() %></td>
+                    <td><%= click.browser || 'Unknown' %></td>
+                    <td><%= click.os || 'Unknown' %></td>
+                    <td><%= click.device || 'Desktop' %></td>
+                    <td><%= click.referrer || 'Direct / Unknown' %></td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% } %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Copy URL functionality
+    const copyUrlBtn = document.getElementById('copyUrlBtn');
+    if (copyUrlBtn) {
+      copyUrlBtn.addEventListener('click', function() {
+        const url = this.getAttribute('data-url');
+        navigator.clipboard.writeText(url).then(function() {
+          copyUrlBtn.innerHTML = '<i class="fas fa-check me-1"></i> Copied!';
+          setTimeout(function() {
+            copyUrlBtn.innerHTML = '<i class="fas fa-copy me-1"></i> Copy URL';
+          }, 2000);
+        });
+      });
+    }
+    
+    // Click search functionality
+    const clickSearch = document.getElementById('clickSearch');
+    if (clickSearch) {
+      clickSearch.addEventListener('keyup', function() {
+        const searchValue = this.value.toLowerCase();
+        const tableRows = document.querySelectorAll('#clickTable tbody tr');
+        
+        tableRows.forEach(row => {
+          const text = row.textContent.toLowerCase();
+          row.style.display = text.includes(searchValue) ? '' : 'none';
+        });
+      });
+    }
+    
+    // Chart functions
+    function createPieChart(elementId, labels, data, backgroundColor) {
+      const ctx = document.getElementById(elementId)?.getContext('2d');
+      if (!ctx) return;
+      
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            backgroundColor: backgroundColor || [
+              '#4361ee', '#3a0ca3', '#f72585', '#4cc9f0', '#4895ef',
+              '#560bad', '#b5179e', '#7209b7', '#480ca8', '#3f37c9'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'right',
+            }
+          }
+        }
+      });
+    }
+    
+    // Create charts if data exists
+    <% if (Object.keys(stats.browsers).length > 0) { %>
+      const browserLabels = <%= JSON.stringify(Object.keys(stats.browsers)) %>;
+      const browserData = <%= JSON.stringify(Object.values(stats.browsers)) %>;
+      createPieChart('browserChart', browserLabels, browserData);
+    <% } %>
+    
+    <% if (Object.keys(stats.os).length > 0) { %>
+      const osLabels = <%= JSON.stringify(Object.keys(stats.os)) %>;
+      const osData = <%= JSON.stringify(Object.values(stats.os)) %>;
+      createPieChart('osChart', osLabels, osData);
+    <% } %>
+    
+    <% if (Object.keys(stats.devices).length > 0) { %>
+      const deviceLabels = <%= JSON.stringify(Object.keys(stats.devices)) %>;
+      const deviceData = <%= JSON.stringify(Object.values(stats.devices)) %>;
+      createPieChart('deviceChart', deviceLabels, deviceData);
+    <% } %>
+  });
+</script>
